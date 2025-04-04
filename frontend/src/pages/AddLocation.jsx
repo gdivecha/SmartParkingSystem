@@ -1,36 +1,59 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import {
+  Dialog, DialogTitle, DialogContent,
+  DialogActions, Button, TextField, Snackbar, Alert
+} from '@mui/material';
 
-const AddLocation = () => {
-  const [location, setLocation] = useState('');
+const AddLocation = ({ open, onClose }) => {
+  const [newLocation, setNewLocation] = useState('');
   const [error, setError] = useState('');
+  const [snackOpen, setSnackOpen] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    
-    // Dummy check for existing location (replace with your actual logic)
-    if (location === 'Existing Location') {
+  const handleAddLocation = () => {
+    if (newLocation.trim() === 'Existing Location') {
       setError('Location already exists');
     } else {
-      // Perform your submit logic here, e.g., sending a request to add the location
-      console.log('New location added:', { location });
-      // Redirect the admin to the dashboard or another appropriate page
+      console.log('New location added:', newLocation);
+      setNewLocation('');
+      setError('');
+      setSnackOpen(true);
+      onClose();
     }
   };
 
   return (
-    <div className="container">
-      <h2>Add New Location</h2>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Location Name:</label>
-          <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} required />
-        </div>
-        <button type="submit">Add Location</button>
-      </form>
-      <Link to="/admin">Back to Dashboard</Link>
-    </div>
+    <>
+      <Dialog open={open} onClose={onClose}>
+        <DialogTitle>Add New Location</DialogTitle>
+        <DialogContent>
+          <TextField
+            label="Location Name"
+            value={newLocation}
+            onChange={(e) => setNewLocation(e.target.value)}
+            fullWidth
+            margin="normal"
+            required
+            error={!!error}
+            helperText={error}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button variant="contained" onClick={handleAddLocation}>Add</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Snackbar
+        open={snackOpen}
+        autoHideDuration={3000}
+        onClose={() => setSnackOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert onClose={() => setSnackOpen(false)} severity="success" sx={{ width: '100%' }}>
+          Location added successfully!
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

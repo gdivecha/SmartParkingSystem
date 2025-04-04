@@ -74,7 +74,7 @@ const Dashboard = () => {
   };
 
   const handleSignOut = () => {
-    navigate('/signup');
+    navigate('/');
   };
 
   return (
